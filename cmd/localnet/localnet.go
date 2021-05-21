@@ -13,7 +13,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 
 	"github.com/alicebob/miniredis/v2"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/go-redis/redis/v7"
 	"github.com/renproject/darknode"
 	"github.com/renproject/lightnode"
@@ -28,7 +27,6 @@ func main() {
 	// FIXME : GETTING THOSE INFOS FROM QUERYING DARKNODES.
 	flagConfig := flag.String("config", "", "Config file path for the shard darknode")
 	flagOut := flag.String("out", "", "Output directory for all the files")
-	flagProtocol := flag.String("protocol", "", "Protocol address for the darknode")
 
 	flag.Parse()
 
@@ -40,11 +38,6 @@ func main() {
 	if err != nil {
 		panic("Please provide the output directory using --out")
 	}
-
-	if *flagProtocol == "" {
-		panic("Please provide the protocal contract address directory using --out")
-	}
-	protocolAddr := common.HexToAddress(*flagProtocol)
 
 	// Wait for an interrupt or terminate signal from the OS, and then cancel
 	// the running context.
@@ -61,7 +54,7 @@ func main() {
 		Network:        darknode.Localnet,
 		DisPubkey:      &config.Keystore.Ecdsa.PublicKey,
 		Port:           *flagPort,
-		ProtocolAddr:   protocolAddr.Hex(),
+		ProtocolAddr:   config.ProtocolAddress.Hex(),
 		BootstrapAddrs: config.Bootstraps,
 	}
 
