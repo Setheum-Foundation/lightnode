@@ -22,8 +22,6 @@ import (
 	"github.com/renproject/multichain"
 	"github.com/renproject/phi"
 	"github.com/sirupsen/logrus"
-
-	solanaRPC "github.com/dfuse-io/solana-go/rpc"
 )
 
 // Lightnode is the top level container that encapsulates the functionality of
@@ -138,7 +136,7 @@ func New(options Options, ctx context.Context, logger logrus.FieldLogger, sqlDB 
 	watchers := map[multichain.Chain]map[multichain.Asset]watcher.Watcher{}
 
 	// Ethereum watchers
-	ethGateways := bindings.EthereumGateways()
+	/* ethGateways := bindings.EthereumGateways()
 	ethClients := bindings.EthereumClients()
 	for chain, contracts := range ethGateways {
 		for asset, bindings := range contracts {
@@ -155,10 +153,10 @@ func New(options Options, ctx context.Context, logger logrus.FieldLogger, sqlDB 
 			watchers[chain][selector.Asset()] = watcher.NewWatcher(logger, options.Network, selector, verifierBindings, burnLogFetcher, blockHeightFetcher, resolverI, client, options.DistPubKey, options.WatcherPollRate, options.WatcherMaxBlockAdvance, options.WatcherConfidenceInterval)
 			logger.Info("watching", selector)
 		}
-	}
+	} */
 
 	// Solana watchers
-	solanaGateways := bindings.ContractGateways()[multichain.Solana]
+	/* solanaGateways := bindings.ContractGateways()[multichain.Solana]
 	solClient := solanaRPC.NewClient(bindingsOpts.Chains[multichain.Solana].RPC.String())
 	for asset, bindings := range solanaGateways {
 		chain := multichain.Solana
@@ -174,7 +172,7 @@ func New(options Options, ctx context.Context, logger logrus.FieldLogger, sqlDB 
 		watchers[chain][selector.Asset()] = watcher.NewWatcher(logger, options.Network, selector, verifierBindings, solanaFetcher, solanaFetcher, resolverI, client, options.DistPubKey, options.WatcherPollRate, options.WatcherMaxBlockAdvance, options.WatcherConfidenceInterval)
 		logger.Info("watching ", selector)
 		logger.Info("at ", bindings)
-	}
+	} */
 
 	return Lightnode{
 		options:    options,
@@ -197,11 +195,11 @@ func (lightnode Lightnode) Run(ctx context.Context) {
 
 	// Note: the following should be disabled when running locally.
 	go lightnode.confirmer.Run(ctx)
-	for _, assetMap := range lightnode.watchers {
+	/* for _, assetMap := range lightnode.watchers {
 		for _, watcher := range assetMap {
 			go watcher.Run(ctx)
 		}
-	}
+	} */
 
 	lightnode.server.Listen(ctx, fmt.Sprintf(":%s", lightnode.options.Port))
 }
