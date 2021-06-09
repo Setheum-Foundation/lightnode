@@ -493,15 +493,19 @@ func V1TxParamsFromTx(ctx context.Context, params ParamsSubmitTx, bindings bindi
 		return jsonrpc.ParamsSubmitTx{}, err
 	}
 
-	ghash, err := engine.V0Ghash(token[:], phash, minter, nonceP)
+	ghash := engine.Ghash(v1tx.Selector, phash, minter, nonceP)
+
+	v0ghash, err := engine.V0Ghash(token[:], phash, minter, nonceP)
 	if err != nil {
 		return jsonrpc.ParamsSubmitTx{}, err
 	}
 
-	nhash, err := engine.V0Nhash(nonceP, txidB, txindex)
-	if err != nil {
-		return jsonrpc.ParamsSubmitTx{}, err
-	}
+	nhash := engine.Nhash(nonceP, txidB, txindex)
+
+	// v0nhash, err := engine.V0Nhash(nonceP, txidB, txindex)
+	// if err != nil {
+	// 	return jsonrpc.ParamsSubmitTx{}, err
+	// }
 
 	// check if we've seen this amount before
 	// also a cheeky workaround to enable testability
@@ -553,7 +557,7 @@ func V1TxParamsFromTx(ctx context.Context, params ParamsSubmitTx, bindings bindi
 	}
 	v1Transaction.Tx.Hash = h
 
-	params.Tx.Hash = MintTxHash(sel, ghash, txidB, txindex)
+	params.Tx.Hash = MintTxHash(sel, v0ghash, txidB, txindex)
 
 	err = store.PersistTxMappings(params.Tx, v1Transaction.Tx)
 	if err != nil {
