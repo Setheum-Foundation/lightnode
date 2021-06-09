@@ -143,6 +143,10 @@ var _ = Describe("Compat V0", func() {
 		keys, err := client.Keys(utxo.TxHash.String() + "_" + utxo.VOut.Int.String()).Result()
 		Expect(err).ShouldNot(HaveOccurred())
 		Expect(len(keys)).Should(Equal(1))
+		Expect(keys[0]).Should(Equal("mArPrCPk9+zMT6h9s0aUKuJ1zV4S5X1zXqZObPL0wMM=_0"))
+
+		v0hash, err := client.Get("v0_" + utxo.TxHash.String() + "_" + utxo.VOut.Int.String()).Result()
+		Expect(v0hash).Should(Equal("fEwRnmZAjz6uzPZFGwYSa4OK8xtHVl2nsncCHvV0aKE="))
 
 		// Check that redis mapped the hashes correctly
 		hash := v1.Tx.Hash.String()
@@ -150,15 +154,9 @@ var _ = Describe("Compat V0", func() {
 		Expect(err).ShouldNot(HaveOccurred())
 		Expect(storedHash).Should(Equal(hash))
 
-		// btc txhash mapping
-		keys, err = client.Keys("*").Result()
-
-		// v0 hash should have a mapping in the store
-		ghash := v1.Tx.Input.Get("ghash").(pack.Bytes32)
-		txid := v1.Tx.Input.Get("txid").(pack.Bytes)
-		txindex := v1.Tx.Input.Get("txindex").(pack.U32)
-		v0Hash := v0.MintTxHash(v1.Tx.Selector, ghash, txid, txindex)
-		Expect(keys).Should(ContainElement(v0Hash.String()))
+		storedHashByV0Hash, err := client.Get(v0hash).Result()
+		Expect(err).ShouldNot(HaveOccurred())
+		Expect(storedHashByV0Hash).Should(Equal(hash))
 
 		// v1 hash should be correct
 		v1Hash, err := tx.NewTxHash(v1.Tx.Version, v1.Tx.Selector, v1.Tx.Input)
@@ -180,6 +178,10 @@ var _ = Describe("Compat V0", func() {
 		keys, err := client.Keys(utxo.TxHash.String() + "_" + utxo.VOut.Int.String()).Result()
 		Expect(err).ShouldNot(HaveOccurred())
 		Expect(len(keys)).Should(Equal(1))
+		Expect(keys[0]).Should(Equal("eK3tRXHMrxw1SXOSGVJAWIpfTTy4Cr1g6wMWBATt3UM=_0"))
+
+		v0hash, err := client.Get("v0_" + utxo.TxHash.String() + "_" + utxo.VOut.Int.String()).Result()
+		Expect(v0hash).Should(Equal("9fO5Lqr63rGeaLnUZPu/1Vaobioft0lTTZ+J++/D74k="))
 
 		// Check that redis mapped the hashes correctly
 		hash := v1.Tx.Hash.String()
@@ -187,15 +189,9 @@ var _ = Describe("Compat V0", func() {
 		Expect(err).ShouldNot(HaveOccurred())
 		Expect(storedHash).Should(Equal(hash))
 
-		// btc txhash mapping
-		keys, err = client.Keys("*").Result()
-
-		// v0 hash should have a mapping in the store
-		ghash := v1.Tx.Input.Get("ghash").(pack.Bytes32)
-		txid := v1.Tx.Input.Get("txid").(pack.Bytes)
-		txindex := v1.Tx.Input.Get("txindex").(pack.U32)
-		v0Hash := v0.MintTxHash(v1.Tx.Selector, ghash, txid, txindex)
-		Expect(keys).Should(ContainElement(v0Hash.String()))
+		storedHashByV0Hash, err := client.Get(v0hash).Result()
+		Expect(err).ShouldNot(HaveOccurred())
+		Expect(storedHashByV0Hash).Should(Equal(hash))
 
 		// v1 hash should be correct
 		v1Hash, err := tx.NewTxHash(v1.Tx.Version, v1.Tx.Selector, v1.Tx.Input)
@@ -217,22 +213,20 @@ var _ = Describe("Compat V0", func() {
 		keys, err := client.Keys(utxo.TxHash.String() + "_" + utxo.VOut.Int.String()).Result()
 		Expect(err).ShouldNot(HaveOccurred())
 		Expect(len(keys)).Should(Equal(1))
+		Expect(keys[0]).Should(Equal("xt4W7r/K0xZh6awkn7PgJqpvS/mI23exobLJnmgeFfA=_0"))
+
+		v0hash, err := client.Get("v0_" + utxo.TxHash.String() + "_" + utxo.VOut.Int.String()).Result()
+		Expect(v0hash).Should(Equal("+RN0xqMbvUwnZfZACq8Zdk7K+yKJ+o3koyE9ySv4SCM="))
 
 		// Check that redis mapped the hashes correctly
 		hash := v1.Tx.Hash.String()
 		storedHash, err := client.Get(keys[0]).Result()
 		Expect(err).ShouldNot(HaveOccurred())
-		Expect(hash).Should(Equal(storedHash))
+		Expect(storedHash).Should(Equal(hash))
 
-		// btc txhash mapping
-		keys, err = client.Keys("*").Result()
-
-		// v0 hash should have a mapping in the store
-		ghash := v1.Tx.Input.Get("ghash").(pack.Bytes32)
-		txid := v1.Tx.Input.Get("txid").(pack.Bytes)
-		txindex := v1.Tx.Input.Get("txindex").(pack.U32)
-		v0Hash := v0.MintTxHash(v1.Tx.Selector, ghash, txid, txindex)
-		Expect(keys).Should(ContainElement(v0Hash.String()))
+		storedHashByV0Hash, err := client.Get(v0hash).Result()
+		Expect(err).ShouldNot(HaveOccurred())
+		Expect(storedHashByV0Hash).Should(Equal(hash))
 
 		// v1 hash should be correct
 		v1Hash, err := tx.NewTxHash(v1.Tx.Version, v1.Tx.Selector, v1.Tx.Input)

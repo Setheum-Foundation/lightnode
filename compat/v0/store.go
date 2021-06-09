@@ -159,6 +159,12 @@ func (store Store) PersistTxMappings(v0tx Tx, v1tx tx.Tx) error {
 		return err
 	}
 
+	// save the tx against the v0 hash
+	err = store.client.Set("v0_"+utxokey, v0tx.Hash.String(), expiry).Err()
+	if err != nil {
+		return err
+	}
+
 	// Also allow for lookup by btc utxo; as we don't have the v0 hash at submission
 	// Expire these because it's only useful during submission, not querying
 	return store.client.Set(utxokey, v1tx.Hash.String(), expiry).Err()
